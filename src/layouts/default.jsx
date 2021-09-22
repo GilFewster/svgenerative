@@ -24,6 +24,8 @@ const Main = styled.main`
 
   > .canvas {
     grid-area: canvas;
+    height: 500px;
+    align-self: center;
     /* background: blue; */
   }
 
@@ -36,6 +38,11 @@ const Main = styled.main`
     grid-template-columns: 1fr minmax(650px, 800px) minmax(320px, 600px) 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: ". canvas controls .";
+    /* grid-template-rows: 1fr minmax(400px, 60vh) 1fr; */
+    /* grid-template-areas:
+      ".    .     controls ."
+      ".  canvas  controls ."
+      ".    .     controls ."; */
     > .canvas,
     > .controls {
       display: flex;

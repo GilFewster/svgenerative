@@ -12,16 +12,27 @@ const Container = styled.div`
     border-radius: 10px;
     overflow: hidden;
     background: white;
+
+    width: 100%;
+    height: 100%;
+
+    border: 1px solid #339900;
   }
 `;
 
-const Artboard = React.forwardRef((props, ref: React.Ref<HTMLDivElement>) => (
-  <Container ref={ref} className="canvas" {...props}>
-    <svg className="svg" viewBox="0 0 800 600" />
+const Artboard = React.forwardRef((props, ref: React.Ref<SVGSVGElement>) => (
+  <Container className="canvas" {...props}>
+    <svg ref={ref} className="svg" />
   </Container>
 ));
 
 export const useArtboard = () => {
   const svgInstance = SVG(`.svg`) as Svg;
-  return { Artboard, svgInstance };
+
+  const getSvgSize = (el: SVGSVGElement | null) => {
+    const width = el ? el.width.baseVal.value : 0;
+    const height = el ? el.height.baseVal.value : 0;
+    return { width, height };
+  };
+  return { Artboard, svgInstance, getSvgSize };
 };

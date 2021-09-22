@@ -1,23 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-
 import { Svg, SVG } from "@svgdotjs/svg.js";
+
 import { random, spline } from "@georgedoescode/generative-utils/src";
 
+import { useArtboard } from "../../hooks/useArtboard";
+
 type Point = { x: number; y: number };
-
-const Canvas = styled.div`
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-
-  svg {
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    overflow: hidden;
-    background: white;
-  }
-`;
 
 const Controls = styled.section`
   display: flex;
@@ -48,17 +37,15 @@ const Button = styled.button`
   }
 `;
 
-const canvasClassName = "svg-canvas";
-
 export const Spliner = () => {
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [numSteps] = useState(25);
+  const { Artboard, svgInstance, getSvgSize } = useArtboard();
+
+  const artboardRef = useRef<SVGSVGElement>(null);
+  const [numSteps] = useState(8);
+  const [isFilled] = useState(false);
   const [svg, setSvg] = useState<Svg>(SVG() as Svg);
-  const [yVariance] = useState(2);
+  const [yVariance] = useState(15);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [width] = useState(800);
-  const [height] = useState(600);
 
   const requestRef = useRef<number>();
   const canvasState = useRef({
@@ -66,21 +53,16 @@ export const Spliner = () => {
     color: 0,
   });
 
-  const paths: any[] = [];
   const points: Point[] = [];
 
   useEffect(() => {
-    if (!canvasRef.current) return;
-    const svgInstance = SVG(`.${canvasClassName}`) as Svg;
-    svgInstance.clear();
+    if (!artboardRef.current || !svgInstance) return;
     setSvg(svgInstance);
-    setCanvasSize(svgInstance.viewbox());
-  }, [canvasRef]);
+  }, [svgInstance]);
 
   const stop = () => {
     setIsAnimating(false);
-    if (!requestRef.current) return;
-    cancelAnimationFrame(requestRef.current);
+    requestRef.current && cancelAnimationFrame(requestRef.current);
   };
 
   const clear = () => {
@@ -90,30 +72,31 @@ export const Spliner = () => {
 
   useEffect(() => {
     function handleResize() {
-      console.log("resized to: ", window.innerWidth, "x", window.innerHeight);
+      stop();
+      svg.clear();
     }
-
     window.addEventListener("resize", handleResize);
   });
 
   const start = () => {
-    setIsAnimating(true);
-    const { width, height } = canvasSize;
+    if (isAnimating) return;
+
+    const { width, height } = getSvgSize(artboardRef.current);
     const yCenter = height / 2;
     const stepSize = width / numSteps;
+
     points.length = 0;
+
     const yPosBase = yCenter + random(height * -0.25, height * 0.25);
     for (let x = 0; x <= width; x += stepSize) {
       points.push({ x, y: yPosBase });
     }
 
+    setIsAnimating(true);
     update();
   };
 
   const update = () => {
-    if (!svg) return;
-    // svg.clear();
-
     const alpha = canvasState.current.alpha - 0.01;
     const color = canvasState.current.color + 10;
 
@@ -126,12 +109,9 @@ export const Spliner = () => {
     const path = svg
       .path(pathData)
       .stroke(`rgba(${color},${color},${color},${alpha})`)
-      .fill("none");
+      .fill(isFilled ? "#333" : "none");
 
-    paths.unshift(path);
-    paths.length = Math.min(paths.length, 1);
-
-    paths.forEach((path) => svg.add(path));
+    svg.add(path);
 
     canvasState.current = {
       alpha: alpha <= 0.4 ? 1 : alpha,
@@ -143,9 +123,7 @@ export const Spliner = () => {
 
   return (
     <>
-      <Canvas ref={canvasRef} className="canvas">
-        <svg className={canvasClassName} viewBox={`0 0 ${width} ${height}`} />
-      </Canvas>
+      <Artboard ref={artboardRef} />
       <Controls className="controls">
         <Button onClick={() => (isAnimating ? stop() : start())}>
           {isAnimating ? "Stop" : "Start"}
