@@ -6,10 +6,10 @@ import { random, spline } from "@georgedoescode/generative-utils/src";
 
 type Point = { x: number; y: number };
 
-const Canvas = styled.div<{ width: number; height: number }>`
+const Canvas = styled.div`
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
-  width: ${({ width }) => width}px;
-  height: ${({ height }) => height}px;
 
   svg {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -48,7 +48,7 @@ const Button = styled.button`
   }
 `;
 
-const canvasClassName = "canvas";
+const canvasClassName = "svg-canvas";
 
 export const Spliner = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -87,6 +87,14 @@ export const Spliner = () => {
     requestRef.current && cancelAnimationFrame(requestRef.current);
     svg.clear();
   };
+
+  useEffect(() => {
+    function handleResize() {
+      console.log("resized to: ", window.innerWidth, "x", window.innerHeight);
+    }
+
+    window.addEventListener("resize", handleResize);
+  });
 
   const start = () => {
     setIsAnimating(true);
@@ -135,10 +143,10 @@ export const Spliner = () => {
 
   return (
     <>
-      <Canvas ref={canvasRef} width={width} height={height}>
+      <Canvas ref={canvasRef} className="canvas">
         <svg className={canvasClassName} viewBox={`0 0 ${width} ${height}`} />
       </Canvas>
-      <Controls>
+      <Controls className="controls">
         <Button onClick={() => (isAnimating ? stop() : start())}>
           {isAnimating ? "Stop" : "Start"}
         </Button>
