@@ -24,13 +24,28 @@ const Controls = styled.section`
   flex-direction: row;
   justify-content: space-around;
   margin: 20px auto 0 auto;
-  max-width: 200px;
+  width: 200px;
 `;
 
 const Button = styled.button`
   border: solid 1px #acacac;
-  background: white;
   text-transform: uppercase;
+  min-width: 80px;
+  padding: 0.5em 0.25em;
+  border-radius: 5px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  background: #fff;
+
+  &:hover {
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.5);
+    font-size: 0.9em;
+    background: linear-gradient(
+      153deg,
+      rgba(238, 238, 238, 1) 0%,
+      rgba(255, 255, 255, 1) 30%,
+      rgba(228, 228, 228, 1) 100%
+    );
+  }
 `;
 
 const canvasClassName = "canvas";
@@ -38,12 +53,12 @@ const canvasClassName = "canvas";
 export const Spliner = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [numSteps, setNumSteps] = useState(25);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [numSteps] = useState(25);
   const [svg, setSvg] = useState<Svg>(SVG() as Svg);
-  const [yVariance, setYVariance] = useState(2);
-  const [width, setWidth] = useState(800);
-  const [height, setHeight] = useState(600);
+  const [yVariance] = useState(2);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [width] = useState(800);
+  const [height] = useState(600);
 
   const requestRef = useRef<number>();
   const canvasState = useRef({
@@ -62,15 +77,8 @@ export const Spliner = () => {
     setCanvasSize(svgInstance.viewbox());
   }, [canvasRef]);
 
-  useEffect(() => {
-    if (isAnimating) {
-      start();
-    } else {
-      stop();
-    }
-  }, [isAnimating]);
-
   const stop = () => {
+    setIsAnimating(false);
     if (!requestRef.current) return;
     cancelAnimationFrame(requestRef.current);
   };
@@ -81,6 +89,7 @@ export const Spliner = () => {
   };
 
   const start = () => {
+    setIsAnimating(true);
     const { width, height } = canvasSize;
     const yCenter = height / 2;
     const stepSize = width / numSteps;
@@ -130,7 +139,7 @@ export const Spliner = () => {
         <svg className={canvasClassName} viewBox={`0 0 ${width} ${height}`} />
       </Canvas>
       <Controls>
-        <Button onClick={() => setIsAnimating((isAnimating) => !isAnimating)}>
+        <Button onClick={() => (isAnimating ? stop() : start())}>
           {isAnimating ? "Stop" : "Start"}
         </Button>
         <Button onClick={clear}>Clear</Button>
