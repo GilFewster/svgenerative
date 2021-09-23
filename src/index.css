@@ -1,18 +1,21 @@
-html {
+/* html {
   box-sizing: border-box;
 }
 *,
 *:before,
 *:after {
   box-sizing: inherit;
+} */
+
+html {
+  min-height: 100%;
 }
 
-html,
 body {
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-#root {
-  height: 100vh;
-  overflow: hidden;
+.view {
+  flex-grow: 1;
 }
