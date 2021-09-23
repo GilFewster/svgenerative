@@ -1,61 +1,48 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { Svg, SVG } from "@svgdotjs/svg.js";
 
+import { Svg, SVG } from "@svgdotjs/svg.js";
+import { Button } from "semantic-ui-react";
 import { random, spline } from "@georgedoescode/generative-utils/src";
 
+import { IPoint } from "../../types/math";
+
 import { useArtboard } from "../../hooks/useArtboard";
+import {
+  IncrementingFunction,
+  useIncrementingLooper,
+} from "../../hooks/loopers";
 
-type Point = { x: number; y: number };
+import { ControlPanel } from "../../components/control-panel";
 
-const Controls = styled.section`
-  /* display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin: 20px auto 0 auto;
-  width: 200px; */
-`;
-
-const Button = styled.button`
-  display: inline;
-  border: solid 1px #acacac;
-  text-transform: uppercase;
-  min-width: 80px;
-  /* height: auto; */
-  padding: 0.5em 0.25em;
-  border-radius: 5px;
-  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
-  background: #fff;
-
-  &:hover {
-    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.5);
-    font-size: 0.9em;
-    background: linear-gradient(
-      153deg,
-      rgba(238, 238, 238, 1) 0%,
-      rgba(255, 255, 255, 1) 30%,
-      rgba(228, 228, 228, 1) 100%
-    );
-  }
-`;
+const alphaIncrementor: IncrementingFunction = (current) =>
+  Math.round((current - 0.05) * 100) / 100;
+const colorIncrementor: IncrementingFunction = (current: number) =>
+  current + 30;
 
 export const Spliner = () => {
   const { Artboard, svgInstance, getSvgSize } = useArtboard();
 
   const artboardRef = useRef<SVGSVGElement>(null);
   const [numSteps] = useState(8);
-  const [isFilled] = useState(false);
   const [svg, setSvg] = useState<Svg>(SVG() as Svg);
   const [yVariance] = useState(15);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const requestRef = useRef<number>();
-  const canvasState = useRef({
-    alpha: 1,
-    color: 0,
+
+  const lineAlpha = useIncrementingLooper({
+    startValue: 0.1,
+    minValue: 0.5,
+    incrementor: colorIncrementor,
   });
 
-  const points: Point[] = [];
+  const lineColors = useIncrementingLooper({
+    startValue: 100,
+    maxValue: 255,
+    incrementor: alphaIncrementor,
+  });
+
+  const points: IPoint[] = [];
 
   useEffect(() => {
     if (!artboardRef.current || !svgInstance) return;
@@ -99,8 +86,8 @@ export const Spliner = () => {
   };
 
   const update = () => {
-    const alpha = canvasState.current.alpha - 0.01;
-    const color = canvasState.current.color + 10;
+    const color = lineColors.next().value;
+    const stroke = `rgba(${color},${color},${color},${lineAlpha.next().value})`;
 
     points.forEach((point) => {
       point.y += random(yVariance * -1, yVariance);
@@ -108,17 +95,9 @@ export const Spliner = () => {
 
     const pathData = spline(points, 1, false);
 
-    const path = svg
-      .path(pathData)
-      .stroke(`rgba(${color},${color},${color},${alpha})`)
-      .fill(isFilled ? "#333" : "none");
+    const path = svg.path(pathData).stroke(stroke).fill("none");
 
     svg.add(path);
-
-    canvasState.current = {
-      alpha: alpha <= 0.4 ? 1 : alpha,
-      color: color >= 170 ? 0 : color,
-    };
 
     requestRef.current = requestAnimationFrame(update);
   };
@@ -126,12 +105,12 @@ export const Spliner = () => {
   return (
     <>
       <Artboard ref={artboardRef} />
-      <Controls className="controls">
+      <ControlPanel className="controls">
         <Button onClick={() => (isAnimating ? stop() : start())}>
           {isAnimating ? "Stop" : "Start"}
         </Button>
         <Button onClick={clear}>Clear</Button>
-      </Controls>
+      </ControlPanel>
     </>
   );
 };
