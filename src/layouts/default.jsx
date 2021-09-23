@@ -1,21 +1,29 @@
 import { SiteHeader } from "../components/site-header";
 import styled from "styled-components";
 
-// const Main = styled.main`
-//   padding: 30px;
-//   background-color: #efefef;
-//   height: 100%;
-//   display: grid;
-//   align-items: center;
-//   align-content: center;
-// `;
+const Breakpoints = {
+  Medium: 800,
+  Large: 1000,
+};
+
+const Container = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  @media (min-width: ${Breakpoints.Medium}px) {
+    flex-direction: row;
+  }
+  align-content: flex-end;
+`;
 
 const Main = styled.main`
   display: grid;
   min-height: 100%;
-  grid-template-rows: minmax(300px, auto) 1fr;
   grid-template-columns: 1fr;
+  grid-template-rows: minmax(300px, auto) 1fr;
   grid-template-areas: "canvas" "controls";
+  flex-grow: 1;
 
   > .canvas,
   > .controls {
@@ -26,23 +34,22 @@ const Main = styled.main`
     grid-area: canvas;
     height: 500px;
     align-self: center;
-    /* background: blue; */
   }
 
   > .controls {
     grid-area: controls;
-    /* background: red; */
   }
 
-  @media (min-width: 1000px) {
+  @media (min-width: ${Breakpoints.Medium}px) {
+    grid-template-rows: 3fr minmax(300px, auto) 4fr;
+    grid-template-areas: "." "canvas" "controls" ".";
+  }
+
+  @media (min-width: ${Breakpoints.Large}px) {
     grid-template-columns: 1fr minmax(650px, 800px) minmax(320px, 600px) 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: ". canvas controls .";
-    /* grid-template-rows: 1fr minmax(400px, 60vh) 1fr; */
-    /* grid-template-areas:
-      ".    .     controls ."
-      ".  canvas  controls ."
-      ".    .     controls ."; */
+
     > .canvas,
     > .controls {
       display: flex;
@@ -52,8 +59,8 @@ const Main = styled.main`
 `;
 
 export const DefaultLayout = ({ children }) => (
-  <>
+  <Container>
     <SiteHeader />
     <Main>{children}</Main>
-  </>
+  </Container>
 );

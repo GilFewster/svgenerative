@@ -7,12 +7,26 @@ html {
   box-sizing: inherit;
 }
 
-html,
-body {
-  min-height: 100vh;
+html {
+  min-height: 100%; /* Look, it's not fixed anymore! */
+
+  /* display: flex;
+  flex-direction: column; */
 }
 
-#root {
-  height: 100vh;
-  overflow: hidden;
+body {
+  display: flex;
+  flex-direction: column;
+  /* flex-grow: 1; */
+}
+
+/* html,
+body {
+  min-height: 100vh;
+} */
+
+.view {
+  /* height: 100vh; */
+  /* overflow: hidden; */
+  flex-grow: 1;
 }

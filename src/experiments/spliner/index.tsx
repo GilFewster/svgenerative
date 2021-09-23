@@ -9,17 +9,19 @@ import { useArtboard } from "../../hooks/useArtboard";
 type Point = { x: number; y: number };
 
 const Controls = styled.section`
-  display: flex;
+  /* display: flex;
   flex-direction: row;
   justify-content: space-around;
   margin: 20px auto 0 auto;
-  width: 200px;
+  width: 200px; */
 `;
 
 const Button = styled.button`
+  display: inline;
   border: solid 1px #acacac;
   text-transform: uppercase;
   min-width: 80px;
+  /* height: auto; */
   padding: 0.5em 0.25em;
   border-radius: 5px;
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
