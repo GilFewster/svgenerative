@@ -16,7 +16,7 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
 
-    border: 1px solid #339900;
+    border: 2px solid #ddd;
   }
 `;
 

@@ -16,8 +16,9 @@ import { ControlPanel } from "../../components/control-panel";
 
 const alphaIncrementor: IncrementingFunction = (current) =>
   Math.round((current - 0.05) * 100) / 100;
+
 const colorIncrementor: IncrementingFunction = (current: number) =>
-  current + 30;
+  current + 10;
 
 export const Spliner = () => {
   const { Artboard, svgInstance, getSvgSize } = useArtboard();
@@ -31,15 +32,15 @@ export const Spliner = () => {
   const requestRef = useRef<number>();
 
   const lineAlpha = useIncrementingLooper({
-    startValue: 0.1,
-    minValue: 0.5,
-    incrementor: colorIncrementor,
+    startValue: 1,
+    minValue: 0,
+    incrementor: alphaIncrementor,
   });
 
   const lineColors = useIncrementingLooper({
-    startValue: 100,
-    maxValue: 255,
-    incrementor: alphaIncrementor,
+    startValue: 0,
+    maxValue: 180,
+    incrementor: colorIncrementor,
   });
 
   const points: IPoint[] = [];

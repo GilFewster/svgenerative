@@ -1,32 +1,21 @@
-html {
+/* html {
   box-sizing: border-box;
 }
 *,
 *:before,
 *:after {
   box-sizing: inherit;
-}
+} */
 
 html {
-  min-height: 100%; /* Look, it's not fixed anymore! */
-
-  /* display: flex;
-  flex-direction: column; */
+  min-height: 100%;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  /* flex-grow: 1; */
 }
 
-/* html,
-body {
-  min-height: 100vh;
-} */
-
 .view {
-  /* height: 100vh; */
-  /* overflow: hidden; */
   flex-grow: 1;
 }
