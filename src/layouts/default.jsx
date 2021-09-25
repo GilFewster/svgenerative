@@ -25,12 +25,12 @@ const Main = styled.main`
   grid-template-areas: "canvas" "controls";
   flex-grow: 1;
 
-  > .canvas,
+  > [data-artboard],
   > .controls {
     padding: 10px;
   }
 
-  > .canvas {
+  > [data-artboard] {
     grid-area: canvas;
     height: 500px;
     align-self: center;
@@ -50,7 +50,7 @@ const Main = styled.main`
     grid-template-rows: 1fr;
     grid-template-areas: ". canvas controls .";
 
-    > .canvas,
+    > [data-artboard],
     > .controls {
       display: flex;
       align-items: center;

@@ -20,14 +20,18 @@ const Container = styled.div`
   }
 `;
 
-const Artboard = React.forwardRef((props, ref: React.Ref<SVGSVGElement>) => (
-  <Container className="canvas" {...props}>
-    <svg ref={ref} className="svg" />
-  </Container>
-));
+const type = "svg";
+
+const Artboard = React.forwardRef((props, ref: React.Ref<SVGSVGElement>) => {
+  return (
+    <Container data-artboard={type} {...props}>
+      <svg ref={ref} className={type} />
+    </Container>
+  );
+});
 
 export const useArtboard = () => {
-  const svgInstance = SVG(`.svg`) as Svg;
+  const svgInstance = SVG(`.${type}`) as Svg;
 
   const getSvgSize = (el: SVGSVGElement | null) => {
     const width = el ? el.width.baseVal.value : 0;
