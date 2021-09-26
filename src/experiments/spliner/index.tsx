@@ -10,6 +10,7 @@ import {
 } from "../../hooks/loopers";
 
 import { ControlPanel } from "../../components/control-panel";
+import { PageArea } from "../../components/page-area";
 
 const alphaIncrementor: IncrementingFunction = (current) =>
   Math.round((current - 0.05) * 100) / 100;
@@ -95,13 +96,15 @@ export const Spliner = () => {
 
   return (
     <>
-      {Artboard}
-      <ControlPanel className="controls">
-        <Button onClick={() => (isAnimating ? stop() : start())}>
-          {isAnimating ? "Stop" : "Start"}
-        </Button>
-        <Button onClick={clear}>Clear</Button>
-      </ControlPanel>
+      <PageArea areaName={"artboard"}>{Artboard}</PageArea>
+      <PageArea areaName={"controls"}>
+        <ControlPanel>
+          <Button onClick={() => (isAnimating ? stop() : start())}>
+            {isAnimating ? "Stop" : "Start"}
+          </Button>
+          <Button onClick={clear}>Clear</Button>
+        </ControlPanel>
+      </PageArea>
     </>
   );
 };
