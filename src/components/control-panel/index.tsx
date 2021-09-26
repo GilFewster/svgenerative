@@ -5,13 +5,7 @@ type ControlPanelProps = {
   className?: string;
 };
 
-const Container = styled.section`
-  /* display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin: 20px auto 0 auto;
-  width: 200px; */
-`;
+const Container = styled.div``;
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   children,
