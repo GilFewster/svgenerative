@@ -26,6 +26,7 @@ const Main = styled.main`
   grid-template-areas: "${PageAreaNames.Artboard}" "${PageAreaNames.ControlPanel}";
   flex-grow: 1;
   grid-gap: 20px;
+  padding: 20px;
 
   [data-page-area] {
     width: 100%;
