@@ -22,35 +22,29 @@ const Main = styled.main`
   min-height: 100%;
   grid-template-columns: 1fr;
   grid-template-rows: minmax(300px, auto) 1fr;
-  grid-template-areas: "canvas" "controls";
+  grid-template-areas: "artboard" "controls";
   flex-grow: 1;
 
-  > [data-artboard],
-  > .controls {
+  > .artboard {
+    grid-area: artboard;
     padding: 10px;
   }
 
-  > [data-artboard] {
-    grid-area: canvas;
-    height: 500px;
-    align-self: center;
-  }
-
   > .controls {
+    padding: 10px;
     grid-area: controls;
   }
 
   @media (min-width: ${Breakpoints.Medium}px) {
     grid-template-rows: 3fr minmax(300px, auto) 4fr;
-    grid-template-areas: "." "canvas" "controls" ".";
+    grid-template-areas: "." "artboard" "controls" ".";
   }
 
   @media (min-width: ${Breakpoints.Large}px) {
     grid-template-columns: 1fr minmax(650px, 800px) minmax(320px, 600px) 1fr;
     grid-template-rows: 1fr;
-    grid-template-areas: ". canvas controls .";
+    grid-template-areas: ". artboard controls .";
 
-    > [data-artboard],
     > .controls {
       display: flex;
       align-items: center;

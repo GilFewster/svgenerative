@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Svg, SVG } from "@svgdotjs/svg.js";
 import { Button } from "semantic-ui-react";
 import { random, spline } from "@georgedoescode/generative-utils/src";
 
@@ -19,34 +18,23 @@ const colorIncrementor: IncrementingFunction = (current: number) =>
   current + 10;
 
 export const Spliner = () => {
-  const { Artboard, svgInstance, getSvgSize } = useSVGArtboard();
-
-  const artboardRef = useRef<SVGSVGElement>(null);
+  const { Artboard, getSvgInstance, getSvgSize } = useSVGArtboard();
   const [numSteps] = useState(8);
-  const [svg, setSvg] = useState<Svg>(SVG() as Svg);
   const [yVariance] = useState(15);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const points: IPoint2D[] = [];
   const requestRef = useRef<number>();
-
   const lineAlpha = useIncrementingLooper({
     startValue: 1,
     minValue: 0,
     incrementor: alphaIncrementor,
   });
-
   const lineColors = useIncrementingLooper({
     startValue: 0,
     maxValue: 180,
     incrementor: colorIncrementor,
   });
-
-  const points: IPoint2D[] = [];
-
-  useEffect(() => {
-    if (!artboardRef.current || !svgInstance) return;
-    setSvg(svgInstance);
-  }, [svgInstance]);
 
   const stop = () => {
     setIsAnimating(false);
@@ -55,13 +43,13 @@ export const Spliner = () => {
 
   const clear = () => {
     requestRef.current && cancelAnimationFrame(requestRef.current);
-    svg.clear();
+    getSvgInstance().clear();
   };
 
   useEffect(() => {
     function handleResize() {
       stop();
-      svg.clear();
+      getSvgInstance().clear();
     }
     window.addEventListener("resize", handleResize);
   });
@@ -69,7 +57,9 @@ export const Spliner = () => {
   const start = () => {
     if (isAnimating) return;
 
-    const { width, height } = getSvgSize(artboardRef.current);
+    console.log(getSvgSize());
+
+    const { width, height } = getSvgSize();
     const yCenter = height / 2;
     const stepSize = width / numSteps;
 
@@ -93,17 +83,19 @@ export const Spliner = () => {
     });
 
     const pathData = spline(points, 1, false);
-
-    const path = svg.path(pathData).stroke(stroke).fill("none");
-
-    svg.add(path);
+    try {
+      const path = getSvgInstance().path(pathData).stroke(stroke).fill("none");
+      getSvgInstance().add(path);
+    } catch (e) {
+      console.log(e);
+    }
 
     requestRef.current = requestAnimationFrame(update);
   };
 
   return (
     <>
-      <Artboard ref={artboardRef} />
+      {Artboard}
       <ControlPanel className="controls">
         <Button onClick={() => (isAnimating ? stop() : start())}>
           {isAnimating ? "Stop" : "Start"}
