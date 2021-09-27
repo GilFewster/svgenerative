@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "semantic-ui-react";
 import { random, spline } from "@georgedoescode/generative-utils/src";
 
-import { useSVGArtboard } from "../../hooks/useSVGArtboard";
+import { useSVGArtboard } from "../../hooks/use-svg-artboard";
 import {
   IncrementingFunction,
   useIncrementingLooper,

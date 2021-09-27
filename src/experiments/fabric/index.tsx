@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 import { Button } from "semantic-ui-react";
 import { random, spline } from "@georgedoescode/generative-utils/src";
 
-import { useCanvasArtboard } from "../../hooks/useCanvasArtboard";
+import { useCanvasArtboard } from "../../hooks/use-canvas-artboard";
 
 import { ControlPanel } from "../../components/control-panel";
 import { PageArea } from "../../components/page-area";
