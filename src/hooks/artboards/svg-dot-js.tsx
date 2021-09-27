@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Svg, SVG } from "@svgdotjs/svg.js";
-import { Artboard as GeneralArtboard } from "../components/artboard";
+import { Artboard as GeneralArtboard } from "../../components/artboard";
 
 const type = "svg";
 
-export const useSVGArtboard = () => {
+export const useSvgDotJsArtboard = () => {
   const [svg, setSvg] = useState<Svg>(SVG() as Svg);
   const artboardRef = useRef<SVGSVGElement>(null);
 
@@ -19,7 +19,7 @@ export const useSVGArtboard = () => {
     </GeneralArtboard>
   );
 
-  const getSvgSize = () => {
+  const getArtboardSize = () => {
     return {
       width: artboardRef.current?.width.baseVal.value || 0,
       height: artboardRef.current?.height.baseVal.value || 0,
@@ -30,5 +30,5 @@ export const useSVGArtboard = () => {
     return svg;
   };
 
-  return { Artboard, getSvgInstance, getSvgSize };
+  return { Artboard, getSvgInstance, getArtboardSize };
 };

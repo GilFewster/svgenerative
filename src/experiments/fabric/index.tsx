@@ -3,16 +3,13 @@ import React, { useEffect, useState } from "react";
 import { fabric } from "fabric";
 
 import { Button } from "semantic-ui-react";
-import { random, spline } from "@georgedoescode/generative-utils/src";
-
-import { useCanvasArtboard } from "../../hooks/use-canvas-artboard";
+import { useCanvasArtboard } from "../../hooks/artboards";
 
 import { ControlPanel } from "../../components/control-panel";
 import { PageArea } from "../../components/page-area";
 
 export const Fabric = () => {
-  const { Artboard, getArtboardSize, canvasId } = useCanvasArtboard();
-  const [isAnimating, setIsAnimating] = useState(false);
+  const { Artboard, artboardSize, canvasId } = useCanvasArtboard();
   const [canvas, setCanvas] = useState<fabric.Canvas>();
 
   useEffect(() => {
@@ -23,36 +20,27 @@ export const Fabric = () => {
     canvas && canvas.clear();
   };
 
-  const resizeCanvas = () => {
-    if (!canvas) return;
-    const { width, height } = getArtboardSize();
-    canvas.setWidth(width);
-    canvas.setHeight(height);
-  };
-
   useEffect(() => {
-    window.addEventListener("resize", resizeCanvas);
-  });
+    if (!canvas || !artboardSize) return;
+    canvas.setWidth(artboardSize.width);
+    canvas.setHeight(artboardSize.height);
+  }, [artboardSize, canvas]);
 
   const start = () => {
     if (!canvas) return;
 
-    resizeCanvas();
     const squareSize = 20;
 
     canvas.add(
       new fabric.Rect({
         width: squareSize,
         height: squareSize,
-        left: canvas.getWidth() - squareSize,
-        top: canvas.getHeight() - squareSize,
+        left: artboardSize.width - squareSize,
+        top: artboardSize.height - squareSize,
         fill: "#339900",
       })
     );
   };
-
-  const stop = () => {};
-  const update = () => {};
 
   return (
     <>

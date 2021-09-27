@@ -1,4 +1,4 @@
-import React, { MutableRefObject, RefObject } from "react";
+import React from "react";
 import styled from "styled-components";
 
 const StyledArtboard = styled.div`

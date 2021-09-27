@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@georgedoescode/generative-utils": "^1.0.37",
+    "@react-hook/resize-observer": "^1.2.4",
     "@svgdotjs/svg.js": "^3.1.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

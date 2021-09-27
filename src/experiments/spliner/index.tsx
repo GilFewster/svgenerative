@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "semantic-ui-react";
 import { random, spline } from "@georgedoescode/generative-utils/src";
 
-import { useSVGArtboard } from "../../hooks/use-svg-artboard";
+import { useSvgDotJsArtboard } from "../../hooks/artboards";
 import {
   IncrementingFunction,
   useIncrementingLooper,
@@ -19,7 +19,7 @@ const colorIncrementor: IncrementingFunction = (current: number) =>
   current + 10;
 
 export const Spliner = () => {
-  const { Artboard, getSvgInstance, getSvgSize } = useSVGArtboard();
+  const { Artboard, getSvgInstance, getArtboardSize } = useSvgDotJsArtboard();
   const [numSteps] = useState(8);
   const [yVariance] = useState(15);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -58,9 +58,7 @@ export const Spliner = () => {
   const start = () => {
     if (isAnimating) return;
 
-    console.log(getSvgSize());
-
-    const { width, height } = getSvgSize();
+    const { width, height } = getArtboardSize();
     const yCenter = height / 2;
     const stepSize = width / numSteps;
 
