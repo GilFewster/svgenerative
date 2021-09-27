@@ -1,3 +1,3 @@
 /// <reference path="./geometery.d.ts" />
 
-type ArtboardType = "svg";
+type ArtboardType = "svg" | "canvas";

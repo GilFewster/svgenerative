@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MutableRefObject, RefObject } from "react";
 import styled from "styled-components";
 
 const StyledArtboard = styled.div`
@@ -21,14 +21,13 @@ const StyledArtboard = styled.div`
 
 type ArtboardProps = {
   type: ArtboardType;
+  children?: any;
 };
 
-export const Artboard: React.FC<ArtboardProps> = ({
-  type,
-  children,
-  ...props
-}) => (
-  <StyledArtboard data-artboard={type} {...props}>
-    {children}
-  </StyledArtboard>
+export const Artboard = React.forwardRef<HTMLDivElement, ArtboardProps>(
+  ({ type, children, ...props }, ref) => (
+    <StyledArtboard data-artboard={type} {...props} ref={ref}>
+      {children}
+    </StyledArtboard>
+  )
 );

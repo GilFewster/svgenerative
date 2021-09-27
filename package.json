@@ -12,6 +12,7 @@
     "@types/node": "^16.9.4",
     "@types/react": "^17.0.22",
     "@types/react-dom": "^17.0.9",
+    "fabric": "^4.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -46,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@types/fabric": "^4.5.3",
     "@types/styled-components": "^5.1.14",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.8"
