@@ -24,12 +24,34 @@ export const Fabric = () => {
     if (!canvas || !artboardSize) return;
     canvas.setWidth(artboardSize.width);
     canvas.setHeight(artboardSize.height);
+
+    // canvas.renderAll();
   }, [artboardSize, canvas]);
 
   const start = () => {
     if (!canvas) return;
 
     const squareSize = 20;
+
+    canvas.add(
+      new fabric.Rect({
+        width: squareSize,
+        height: squareSize,
+        left: 0,
+        top: artboardSize.height / 2 - squareSize / 2,
+        fill: "#0099s",
+      })
+    );
+
+    canvas.add(
+      new fabric.Rect({
+        width: squareSize,
+        height: squareSize,
+        left: artboardSize.width - squareSize,
+        top: 0,
+        fill: "#993300",
+      })
+    );
 
     canvas.add(
       new fabric.Rect({
@@ -49,6 +71,9 @@ export const Fabric = () => {
         <ControlPanel>
           <Button onClick={() => start()}>Draw</Button>
           <Button onClick={clear}>Clear</Button>
+          <p>
+            {artboardSize.width} x {artboardSize.height}
+          </p>
         </ControlPanel>
       </PageArea>
     </>

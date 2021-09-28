@@ -5,7 +5,9 @@ type ControlPanelProps = {
   className?: string;
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding: calc(var(--padding) / 2);
+`;
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   children,
