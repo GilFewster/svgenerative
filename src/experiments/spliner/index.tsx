@@ -1,28 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Button } from "semantic-ui-react";
-import { random, spline } from "@georgedoescode/generative-utils/src";
+import { fabric } from "fabric";
 
-import { useSvgDotJsArtboard } from "../../hooks/artboards";
+import { Button } from "semantic-ui-react";
+import { useCanvasArtboard } from "../../hooks/artboards";
+
+import { ControlPanel } from "../../components/control-panel";
+import { PageArea } from "../../components/page-area";
 import {
   IncrementingFunction,
   useIncrementingLooper,
 } from "../../hooks/loopers";
 
-import { ControlPanel } from "../../components/control-panel";
-import { PageArea } from "../../components/page-area";
-
-const alphaIncrementor: IncrementingFunction = (current) =>
-  Math.round((current - 0.05) * 100) / 100;
-
-const colorIncrementor: IncrementingFunction = (current: number) =>
-  current + 10;
+import { random, spline } from "@georgedoescode/generative-utils/src";
 
 export const Spliner = () => {
-  const { Artboard, getSvgInstance, getArtboardSize } = useSvgDotJsArtboard();
+  const { Artboard, artboardSize, canvasId } = useCanvasArtboard();
+  const [canvas, setCanvas] = useState<fabric.Canvas>();
+
   const [numSteps] = useState(8);
   const [yVariance] = useState(15);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const alphaIncrementor: IncrementingFunction = (current) =>
+    Math.round((current - 0.05) * 100) / 100;
+
+  const colorIncrementor: IncrementingFunction = (current: number) =>
+    current + 10;
 
   const points: IPoint2D[] = [];
   const requestRef = useRef<number>();
@@ -37,6 +41,10 @@ export const Spliner = () => {
     incrementor: colorIncrementor,
   });
 
+  useEffect(() => {
+    if (canvasId && !canvas) setCanvas(new fabric.Canvas(canvasId));
+  }, [canvasId, canvas]);
+
   const stop = () => {
     setIsAnimating(false);
     requestRef.current && cancelAnimationFrame(requestRef.current);
@@ -44,21 +52,21 @@ export const Spliner = () => {
 
   const clear = () => {
     requestRef.current && cancelAnimationFrame(requestRef.current);
-    getSvgInstance().clear();
+    canvas && canvas.clear();
   };
 
   useEffect(() => {
-    function handleResize() {
-      stop();
-      getSvgInstance().clear();
-    }
-    window.addEventListener("resize", handleResize);
-  });
+    if (!canvas || !artboardSize) return;
+    canvas.setWidth(artboardSize.width);
+    canvas.setHeight(artboardSize.height);
+  }, [artboardSize, canvas]);
 
   const start = () => {
+    if (!canvas) return;
+
     if (isAnimating) return;
 
-    const { width, height } = getArtboardSize();
+    const { width, height } = artboardSize;
     const yCenter = height / 2;
     const stepSize = width / numSteps;
 
@@ -83,8 +91,13 @@ export const Spliner = () => {
 
     const pathData = spline(points, 1, false);
     try {
-      const path = getSvgInstance().path(pathData).stroke(stroke).fill("none");
-      getSvgInstance().add(path);
+      canvas &&
+        canvas.add(
+          new fabric.Path(pathData, {
+            fill: "",
+            stroke: stroke,
+          })
+        );
     } catch (e) {
       console.log(e);
     }
@@ -98,9 +111,12 @@ export const Spliner = () => {
       <PageArea areaName={"controls"}>
         <ControlPanel>
           <Button onClick={() => (isAnimating ? stop() : start())}>
-            {isAnimating ? "Stop" : "Start"}
+            {isAnimating ? "Stop" : "Draw"}
           </Button>
           <Button onClick={clear}>Clear</Button>
+          <p>
+            {artboardSize.width} x {artboardSize.height}
+          </p>
         </ControlPanel>
       </PageArea>
     </>
