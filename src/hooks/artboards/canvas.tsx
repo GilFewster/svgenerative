@@ -7,7 +7,7 @@ const type = "canvas";
 
 export const useCanvasArtboard = () => {
   const artboardRef = useRef<HTMLDivElement>(null);
-  const canvasId = type + String(useUniversalCounter().next());
+  const canvasId = "canvas02"; //type + String(useUniversalCounter().next());
   const artboardSize = useSize(artboardRef);
 
   const Artboard = (

@@ -9,18 +9,18 @@ type PageAreaProps = {
   className?: string;
 };
 
-const Container = styled.section<{ areaName: PageAreaName }>`
-  ${({ areaName }) => css`
-    grid-area: ${areaName};
-  `}
-`;
+// const Container = styled.section<{ areaName: PageAreaName }>`
+//   ${({ areaName }) => css`
+//     grid-area: ${areaName};
+//   `}
+// `;
 
 export const PageArea: React.FC<PageAreaProps> = ({
   areaName,
   children,
   ...props
 }) => (
-  <Container areaName={areaName} {...props} data-page-area={areaName}>
+  <section {...props} data-page-area={areaName}>
     {children}
-  </Container>
+  </section>
 );

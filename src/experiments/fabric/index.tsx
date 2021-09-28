@@ -20,11 +20,11 @@ export const Fabric = () => {
     canvas && canvas.clear();
   };
 
-  useEffect(() => {
-    if (!canvas || !artboardSize) return;
-    canvas.setWidth(artboardSize.width);
-    canvas.setHeight(artboardSize.height);
-  }, [artboardSize, canvas]);
+  // useEffect(() => {
+  //   if (!canvas || !artboardSize) return;
+  //   canvas.setWidth(artboardSize.width);
+  //   canvas.setHeight(artboardSize.height);
+  // }, [artboardSize, canvas]);
 
   const start = () => {
     if (!canvas) return;
