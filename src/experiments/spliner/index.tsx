@@ -1,41 +1,54 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Button } from "semantic-ui-react";
-import { random, spline } from "@georgedoescode/generative-utils/src";
+import { fabric } from "fabric";
 
-import { useSvgDotJsArtboard } from "../../hooks/artboards";
-import {
-  IncrementingFunction,
-  useIncrementingLooper,
-} from "../../hooks/loopers";
+import { Button } from "semantic-ui-react";
+import { useCanvasArtboard } from "../../hooks/artboards";
 
 import { ControlPanel } from "../../components/control-panel";
 import { PageArea } from "../../components/page-area";
+import {
+  IncrementingFunction,
+  useIncrementingLooper,
+  useValueLooper,
+} from "../../hooks/loopers";
 
-const alphaIncrementor: IncrementingFunction = (current) =>
-  Math.round((current - 0.05) * 100) / 100;
+import { random, spline } from "@georgedoescode/generative-utils/src";
+import { Color } from "@svgdotjs/svg.js";
 
-const colorIncrementor: IncrementingFunction = (current: number) =>
-  current + 10;
+const hueIncrementor: IncrementingFunction = (current: number) => ++current;
 
 export const Spliner = () => {
-  const { Artboard, getSvgInstance, getArtboardSize } = useSvgDotJsArtboard();
-  const [numSteps] = useState(8);
-  const [yVariance] = useState(15);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const { Artboard, artboardSize, canvasId } = useCanvasArtboard();
+  const [canvas, setCanvas] = useState<fabric.StaticCanvas>();
 
   const points: IPoint2D[] = [];
   const requestRef = useRef<number>();
-  const lineAlpha = useIncrementingLooper({
-    startValue: 1,
-    minValue: 0,
-    incrementor: alphaIncrementor,
+
+  /**
+   * Adjust the height of each point on every update
+   * The actual amount is +/- a percentage of the total canvas height,
+   * selected at random from a range of 0 -> yVariance
+   */
+  const [yVariance] = useState(0.007);
+  const [numSteps] = useState(15);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [hueRange] = useState({ min: 160, max: 200 });
+  const [dashArray] = useState([]);
+  const [lineWidth] = useState([0.25, 0.5, 0.75, 1, 0.75, 0.5]);
+  const [maxLines] = useState(300);
+
+  const lineHues = useIncrementingLooper({
+    startValue: hueRange.min,
+    maxValue: hueRange.max,
+    incrementor: hueIncrementor,
   });
-  const lineColors = useIncrementingLooper({
-    startValue: 0,
-    maxValue: 180,
-    incrementor: colorIncrementor,
-  });
+
+  const lineWidths = useValueLooper(lineWidth);
+
+  useEffect(() => {
+    if (canvasId && !canvas) setCanvas(new fabric.StaticCanvas(canvasId));
+  }, [canvasId, canvas]);
 
   const stop = () => {
     setIsAnimating(false);
@@ -44,21 +57,21 @@ export const Spliner = () => {
 
   const clear = () => {
     requestRef.current && cancelAnimationFrame(requestRef.current);
-    getSvgInstance().clear();
+    canvas && canvas.clear();
   };
 
   useEffect(() => {
-    function handleResize() {
-      stop();
-      getSvgInstance().clear();
-    }
-    window.addEventListener("resize", handleResize);
-  });
+    if (!canvas || !artboardSize) return;
+    canvas.setWidth(artboardSize.width);
+    canvas.setHeight(artboardSize.height);
+  }, [artboardSize, canvas]);
 
   const start = () => {
+    if (!canvas) return;
+
     if (isAnimating) return;
 
-    const { width, height } = getArtboardSize();
+    const { width, height } = artboardSize;
     const yCenter = height / 2;
     const stepSize = width / numSteps;
 
@@ -74,17 +87,34 @@ export const Spliner = () => {
   };
 
   const update = () => {
-    const color = lineColors.next().value;
-    const stroke = `rgba(${color},${color},${color},${lineAlpha.next().value})`;
+    const { height } = artboardSize;
+    const hue = lineHues.next();
+    const sat = random(20, 90);
+    const lum = 80 - sat * 0.7;
+    const lineWidth = lineWidths.next();
+
+    while (canvas && canvas?.getObjects().length > maxLines) {
+      canvas.remove(canvas.getObjects()[0]);
+    }
+
+    const stroke = new Color([hue, sat, lum], "hsl");
 
     points.forEach((point) => {
-      point.y += random(yVariance * -1, yVariance);
+      const yAmount = random(height * -yVariance, height * yVariance);
+      point.y += yAmount;
     });
 
     const pathData = spline(points, 1, false);
     try {
-      const path = getSvgInstance().path(pathData).stroke(stroke).fill("none");
-      getSvgInstance().add(path);
+      canvas &&
+        canvas.add(
+          new fabric.Path(pathData, {
+            fill: "",
+            stroke: stroke.toString(),
+            strokeDashArray: dashArray,
+            strokeWidth: lineWidth,
+          })
+        );
     } catch (e) {
       console.log(e);
     }
@@ -98,7 +128,7 @@ export const Spliner = () => {
       <PageArea areaName={"controls"}>
         <ControlPanel>
           <Button onClick={() => (isAnimating ? stop() : start())}>
-            {isAnimating ? "Stop" : "Start"}
+            {isAnimating ? "Stop" : "Draw"}
           </Button>
           <Button onClick={clear}>Clear</Button>
         </ControlPanel>

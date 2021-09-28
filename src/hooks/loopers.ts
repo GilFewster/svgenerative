@@ -50,12 +50,16 @@ function* IncrementingLooper(
 
 export type IncrementingFunction = (current: number) => number;
 
-export function useValueLooper<Type>(values: Type[]): Generator<Type> {
-  return ValueLooper([...values]);
+export function useValueLooper<Type>(values: Type[]) {
+  const looper = ValueLooper([...values]);
+  const next = () => looper.next().value;
+  return { next };
 }
 
 export function useIncrementingLooper(
   props: RisingIncrementorProps | FallingIncrementorProps
-): Generator<number> {
-  return IncrementingLooper(props);
+) {
+  const looper = IncrementingLooper({ ...props });
+  const next = () => looper.next().value;
+  return { next };
 }
