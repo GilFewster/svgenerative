@@ -2,15 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledArtboard = styled.div`
-  position: relative;
   height: 100%;
+  position: relative;
   overflow: hidden;
-
-  > :first-child {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
 `;
 
 type ArtboardProps = {

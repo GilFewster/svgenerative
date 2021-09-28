@@ -9,12 +9,6 @@ type PageAreaProps = {
   className?: string;
 };
 
-// const Container = styled.section<{ areaName: PageAreaName }>`
-//   ${({ areaName }) => css`
-//     grid-area: ${areaName};
-//   `}
-// `;
-
 export const PageArea: React.FC<PageAreaProps> = ({
   areaName,
   children,
