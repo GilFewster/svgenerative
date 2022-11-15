@@ -7,6 +7,10 @@ type ControlPanelProps = {
 
 const Container = styled.div`
   padding: calc(var(--padding) / 2);
+  display: flex;
+  button {
+    flex-grow: 1;
+  }
 `;
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
